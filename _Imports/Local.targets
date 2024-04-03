@@ -1,0 +1,7 @@
+<Project>
+
+  <PropertyGroup>
+    <HideDependency>contentfiles;analyzers;build;compile</HideDependency>
+  </PropertyGroup>
+
+</Project>
