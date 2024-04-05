@@ -49,9 +49,9 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                 if (assemblyName.Name == null)
                     continue;
 
-                if (!CallSiteTaggerDefaults.DefaultIncludeFrame(assemblyName))
+                if (!CallSiteTaggerDefaults.DefaultIncludeFrame(assemblyName, frameMethod))
                     continue;
-                if (_config.FrameFilter != null && !_config.FrameFilter(assemblyName))
+                if (_config.FrameFilter != null && !_config.FrameFilter(assemblyName, frameMethod))
                     continue;
 
                 if (_config.TaggingMode == CallSiteTaggingMode.OnlyMethod)

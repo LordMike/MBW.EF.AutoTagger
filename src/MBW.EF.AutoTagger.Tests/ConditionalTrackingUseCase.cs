@@ -25,7 +25,7 @@ public class ConditionalTrackingUseCase
         using var context = new TestDbContext(config =>
         {
             // Filter out xunit frames
-            config.FrameFilter = assembly => !assembly.Name.StartsWith("xunit.", StringComparison.Ordinal);
+            config.FrameFilter = (assembly, _) => !assembly.Name.StartsWith("xunit.", StringComparison.Ordinal);
             config.TagFilter = (context, command) =>
             {
                 if (initialRun || context == null)

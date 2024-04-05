@@ -7,7 +7,7 @@ internal static class CallSiteTaggerDefaults
 {
     private const string ThisAssemblyName = "MBW.EF.AutoTagger";
 
-    public static TagQueryIncludeFrame DefaultIncludeFrame = assemblyName =>
+    public static TagQueryIncludeFrame DefaultIncludeFrame = (assemblyName, method) =>
     {
         Debug.Assert(assemblyName.Name != null);
 
