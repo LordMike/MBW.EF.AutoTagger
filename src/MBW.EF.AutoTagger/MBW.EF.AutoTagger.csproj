@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <Description>Automatic callsite tagging functionality for EntityFramework Core
+    </Description>
   </PropertyGroup>
 
   <ItemGroup>
