@@ -111,7 +111,7 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
     {
         string? fileName = frame.GetFileName();
         if (fileName != null)
-            return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.Name}, File:{fileName}, Line:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}";
-        return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.Name}";
+            return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}, File:{fileName}, Line:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}";
+        return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}";
     }
 }
