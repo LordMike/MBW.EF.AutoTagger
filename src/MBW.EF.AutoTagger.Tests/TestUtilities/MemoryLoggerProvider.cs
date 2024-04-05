@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace MBW.EF.AutoTagger.Tests;
+namespace MBW.EF.AutoTagger.Tests.TestUtilities;
 
 internal class MemoryLoggerProvider : ILoggerProvider
 {
     private readonly LogMessage _onLog;
 
-    public delegate void LogMessage(string category, LogLevel level, EventId eventId, string message);
+    public delegate void LogMessage(EventId eventId, string message);
 
     public MemoryLoggerProvider(LogMessage onLog)
     {
@@ -17,5 +17,5 @@ internal class MemoryLoggerProvider : ILoggerProvider
     {
     }
 
-    public ILogger CreateLogger(string categoryName) => new MemoryLogger(_onLog, categoryName);
+    public ILogger CreateLogger(string categoryName) => new MemoryLogger(_onLog);
 }

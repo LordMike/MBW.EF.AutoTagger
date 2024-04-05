@@ -6,16 +6,22 @@ namespace MBW.EF.AutoTagger.Extensions;
 
 public static class OptionsbuilderExtensions
 {
-    public static DbContextOptionsBuilder AddCallsiteTagging(this DbContextOptionsBuilder builder, Action<TaggedQueryCommandInterceptor> configure = null)
+    public static DbContextOptionsBuilder UseCallsiteTagging(this DbContextOptionsBuilder builder, Action<CallSiteTaggerConfig>? configure = null)
     {
-        builder.AddInterceptors(new TaggedQueryCommandInterceptor());
+        CallSiteTaggerConfig config = new CallSiteTaggerConfig();
+        configure?.Invoke(config);
+        
+        builder.AddInterceptors(new CallSiteTagger(config));
 
         return builder;
     }
 
-    public static DbContextOptionsBuilder<TContext> AddCallsiteTagging<TContext>(this DbContextOptionsBuilder<TContext> builder, Action<TaggedQueryCommandInterceptor> configure = null) where TContext : DbContext
+    public static DbContextOptionsBuilder<TContext> UseCallsiteTagging<TContext>(this DbContextOptionsBuilder<TContext> builder, Action<CallSiteTaggerConfig>? configure = null) where TContext : DbContext
     {
-        builder.AddInterceptors(new TaggedQueryCommandInterceptor());
+        CallSiteTaggerConfig config = new CallSiteTaggerConfig();
+        configure?.Invoke(config);
+
+        builder.AddInterceptors(new CallSiteTagger(config));
 
         return builder;
     }
