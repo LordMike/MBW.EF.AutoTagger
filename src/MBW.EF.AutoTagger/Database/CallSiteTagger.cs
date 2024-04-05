@@ -56,8 +56,8 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
 
                 if (_config.TaggingMode == CallSiteTaggingMode.OnlyMethod)
                 {
-                    // Use this frame
-                    string thisFrameStr = GetStringForFrame(frame, frameMethod);
+                    // Use this frame. Do not include assembly name in output
+                    string thisFrameStr = GetStringForFrame(frame, frameMethod, false);
                     command.CommandText = $"-- {thisFrameStr}\n{command.CommandText}";
 
                     return;
@@ -77,8 +77,9 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                 if (method == null)
                     continue;
 
+                // Use assembly name in output as the stack may span multiple assemblies
                 sb.Append("-- ");
-                sb.AppendLine(GetStringForFrame(frame!, method));
+                sb.AppendLine(GetStringForFrame(frame!, method, true));
             }
 
             sb.AppendLine(command.CommandText);
@@ -95,8 +96,9 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                 if (method == null)
                     continue;
 
+                // Use assembly name in output as the stack may span multiple assemblies
                 sb.Append("-- ");
-                sb.AppendLine(GetStringForFrame(frame, method));
+                sb.AppendLine(GetStringForFrame(frame, method, true));
             }
 
             sb.AppendLine(command.CommandText);
@@ -107,11 +109,20 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
             throw new InvalidOperationException("Unsupported method");
     }
 
-    private static string GetStringForFrame(StackFrame frame, MethodBase frameMethod)
+    private static string GetStringForFrame(StackFrame frame, MethodBase frameMethod, bool includeAssembly)
     {
         string? fileName = frame.GetFileName();
-        if (fileName != null)
-            return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}, File:{fileName}, Line:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}";
-        return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}";
+        if (includeAssembly)
+        {
+            if (fileName != null)
+                return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}, File:{fileName}, Line:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}";
+            return $"{frameMethod.Module.Assembly.GetName().Name} / {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}";
+        }
+        else
+        {
+            if (fileName != null)
+                return $" {frameMethod.DeclaringType?.FullName}.{frameMethod.Name}, File:{fileName}, Line:{frame.GetFileLineNumber()}:{frame.GetFileColumnNumber()}";
+            return $"{frameMethod.DeclaringType?.FullName}.{frameMethod.Name}";
+        }
     }
 }
