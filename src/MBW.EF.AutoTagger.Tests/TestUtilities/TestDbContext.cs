@@ -4,13 +4,12 @@ using System.Threading.Tasks;
 using MBW.EF.AutoTagger.Database;
 using MBW.EF.AutoTagger.Extensions;
 using MBW.EF.AutoTagger.Tests.TestContext;
-using MBW.EF.AutoTagger.Tests.TestUtilities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace MBW.EF.AutoTagger.Tests;
+namespace MBW.EF.AutoTagger.Tests.TestUtilities;
 
 internal class TestDbContext : IDisposable, IAsyncDisposable
 {
