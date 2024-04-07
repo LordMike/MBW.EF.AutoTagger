@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.ObjectPool;
 
 namespace MBW.EF.AutoTagger.Database;
 
@@ -49,7 +50,7 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                 if (assemblyName.Name == null)
                     continue;
 
-                if (!CallSiteTaggerDefaults.DefaultIncludeFrame(assemblyName, frameMethod))
+                if (!CallSiteTaggerHelpers.DefaultIncludeFrame(assemblyName, frameMethod))
                     continue;
                 if (_config.FrameFilter != null && !_config.FrameFilter(assemblyName, frameMethod))
                     continue;
@@ -68,11 +69,11 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
             }
 
             // TaggingMethod is all stack from this point
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = CallSiteTaggerHelpers.StringBuilderPool.Get();
 
             for (; frameIdx < trace.FrameCount; frameIdx++)
             {
-                var frame = trace.GetFrame(frameIdx);
+                StackFrame? frame = trace.GetFrame(frameIdx);
                 MethodBase? method = frame?.GetMethod();
                 if (method == null)
                     continue;
@@ -85,10 +86,12 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
             sb.AppendLine(command.CommandText);
 
             command.CommandText = sb.ToString();
+            
+            CallSiteTaggerHelpers.StringBuilderPool.Return(sb);
         }
         else if (_config.TaggingMode == CallSiteTaggingMode.FullStack)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = CallSiteTaggerHelpers.StringBuilderPool.Get();
 
             foreach (StackFrame frame in trace.GetFrames())
             {
@@ -104,6 +107,8 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
             sb.AppendLine(command.CommandText);
 
             command.CommandText = sb.ToString();
+            
+            CallSiteTaggerHelpers.StringBuilderPool.Return(sb);
         }
         else
             throw new InvalidOperationException("Unsupported method");

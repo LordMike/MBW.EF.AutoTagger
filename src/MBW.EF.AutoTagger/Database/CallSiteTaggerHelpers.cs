@@ -1,12 +1,22 @@
 ﻿using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Text;
+using Microsoft.Extensions.ObjectPool;
 
 namespace MBW.EF.AutoTagger.Database;
 
-internal static class CallSiteTaggerDefaults
+internal static class CallSiteTaggerHelpers
 {
     private const string ThisAssemblyName = "MBW.EF.AutoTagger";
+
+    static CallSiteTaggerHelpers()
+    {
+        ObjectPoolProvider objectPool = new DefaultObjectPoolProvider();
+        StringBuilderPool = objectPool.CreateStringBuilderPool(1, 1);
+    }
+
+    public static ObjectPool<StringBuilder> StringBuilderPool { get; }
 
     public static TagQueryIncludeFrame DefaultIncludeFrame = (assemblyName, method) =>
     {
