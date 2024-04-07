@@ -17,4 +17,14 @@ public class CallSiteTaggerConfig
     /// The tagging mode to use. The default is <see cref="CallSiteTaggingMode.OnlyMethod"/>, which is a oneliner with a method name. When troubleshooting which frames are discarded with <see cref="FrameFilter"/>, it can help to set this to <see cref="CallSiteTaggingMode.FullStack"/>.
     /// </summary>
     public CallSiteTaggingMode TaggingMode { get; set; } = CallSiteTaggingMode.OnlyMethod;
+
+    /// <summary>
+    /// The string to prefix all added tags with. By default, this is "-- "
+    /// </summary>
+    public string CommentPrefix { get; set; } = "-- ";
+
+    /// <summary>
+    /// The string to suffix all added tags with. By default, this is "\n"
+    /// </summary>
+    public string CommentSuffix { get; set; } = "\n";
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Reflection;
@@ -59,7 +59,7 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                 {
                     // Use this frame. Do not include assembly name in output
                     string thisFrameStr = GetStringForFrame(frame, frameMethod, false);
-                    command.CommandText = $"-- {thisFrameStr}\n{command.CommandText}";
+                    command.CommandText = $"{_config.CommentPrefix}{thisFrameStr}{_config.CommentSuffix}{command.CommandText}";
 
                     return;
                 }
@@ -79,11 +79,12 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                     continue;
 
                 // Use assembly name in output as the stack may span multiple assemblies
-                sb.Append("-- ");
-                sb.AppendLine(GetStringForFrame(frame!, method, true));
+                sb.Append(_config.CommentPrefix);
+                sb.Append(GetStringForFrame(frame!, method, true));
+                sb.Append(_config.CommentSuffix);
             }
 
-            sb.AppendLine(command.CommandText);
+            sb.Append(command.CommandText);
 
             command.CommandText = sb.ToString();
             
@@ -100,11 +101,12 @@ internal class CallSiteTagger : DbCommandInterceptor, ISingletonInterceptor
                     continue;
 
                 // Use assembly name in output as the stack may span multiple assemblies
-                sb.Append("-- ");
-                sb.AppendLine(GetStringForFrame(frame, method, true));
+                sb.Append(_config.CommentPrefix);
+                sb.Append(GetStringForFrame(frame, method, true));
+                sb.Append(_config.CommentSuffix);
             }
 
-            sb.AppendLine(command.CommandText);
+            sb.Append(command.CommandText);
 
             command.CommandText = sb.ToString();
             
